@@ -1,0 +1,38 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #aaa;
+}
+
+.container {
+  width: 960px;
+  margin: 0 auto;
+}
+
+.display-box {
+  height: 200px;
+  width: 30%;
+  display: inline-block;
+  background-color: #fff;
+}
+
+.display-container {
+  width: 800px;
+  margin: 0 auto;
+}
+
+#message-list {
+  height: 200px;
+  width: 100%;
+  background-color: #fff;
+}
+
+#text-input {
+  width: 89%;
+}
+
+#button-input {
+  width: 10%;
+}
