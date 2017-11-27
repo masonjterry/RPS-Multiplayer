@@ -1,9 +1,3 @@
-// when player one name is input, have that name printed in the player one box
-// when player one name is input, have player 2 box print that we are waiting on player 2
-// when player two name in input, print player 2 name in player 2 box
-// when player two name is input, provide the players with rock paper or Scissors
-//
-
 $(document).ready(function() {
 
 // Initialize Firebases
@@ -17,42 +11,66 @@ let config = {
 };
 firebase.initializeApp(config);
 
-// variable for database
 let database = firebase.database();
 
-// variables for connections
     let ourConnectionsRef = database.ref("/connections");
     let googleConnectionsRef = database.ref(".info/connected");
     let connection;
 
     googleConnectionsRef.on("value", function(snapshot) {
-      console.log("snapshot.val googleCon", snapshot.val());
       if (snapshot.val()) {
         connection = ourConnectionsRef.push(true);
-        connection.onDisconnect().remove();
-        $("#player-1-box").text("Please enter your name");
+        if (connection.onDisconnect().remove()) {
+          $("#player-1-box").text("Player 1 please enter your name");
+          $("#player-2-box").text("Player 2 please enter your name");
+        }
       }
     });
 
     ourConnectionsRef.on("value", function(snapshot) {
-      console.log("snapshot.numChildren", snapshot.numChildren());
+
     });
 
   $("#player-button").on("click", function(event) {
 
-    event.preventDefault();
+    let playerInfo = {
+      player: $("#player-name").val().trim(),
+      dateAdded: firebase.database.ServerValue.TIMESTAMP
+    };
 
-    let player = $("#player-name").val().trim();
-    console.log("player", player);
+    $("#player-name").val("");
 
-    database.ref().push({ player: player, dateAdded: firebase.database.ServerValue.TIMESTAMP });
+    database.ref().push(playerInfo);
 
-    if (database.player === "") {
-      $("#player-1-box").text(database.player);
-    } else {
-      $("#player-2-box").text(database.player);
-    }
+    });
+
+    let addPlayer = false;
+
+    let picks = $("<button id=\"rock-button\" data-name=\"rock\">Rock</button><button id=\"paper-button\" data-name=\"paper\">Paper</button><button id=\"scissors-button\" data-name=\"scissors\">Scissors</button>");
+
+    database.ref().on("child_added", function(snapshot) {
+
+      let playerOne;
+      let playerTwo;
+
+      if (addPlayer === false) {
+        playerOne = snapshot.val().player;
+        $("#player-1-box").text(playerOne);
+        addPlayer = true;
+      } else {
+        playerTwo = snapshot.val().player
+        $("#player-2-box").text(playerTwo);
+        addPlayer = false;
+        $("#player-1-box").append(picks);
+      }
 
   });
 
+  $("button").on("click", function(event) {
+
+    console.log("event", event);
+
+    console.log("I was clicked");
+
+  });
 });
